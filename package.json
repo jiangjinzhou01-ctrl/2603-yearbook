@@ -1,0 +1,12 @@
+{
+  "name": "2603-yearbook",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/check.mjs"
+  },
+  "dependencies": { "motion": "^12.0.0" },
+  "devDependencies": { "esbuild": "^0.25.0" }
+}

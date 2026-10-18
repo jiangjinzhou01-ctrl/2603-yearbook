@@ -1,0 +1,12 @@
+import { readFile, stat } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+const html = await readFile('index.html', 'utf8');
+const refs = [...html.matchAll(/(?:src|href)="(\.\/[^"#?]+)"/g)].map(match => match[1]);
+for (const ref of new Set(refs)) await stat(ref);
+if (/<(?:button|input|a)\b/i.test(html)) throw new Error('This edition should have no navigation or fixed gesture controls.');
+if ((html.match(/<section\b/g) || []).length !== 2 || !html.includes('敬请')) throw new Error('Expected the cover and coming-soon sections.');
+execFileSync(process.execPath, ['--check', 'src/app.js']);
+execFileSync(process.execPath, ['--check', 'assets/app.js']);
+const bundle = await stat('assets/app.js');
+if (bundle.size > 100_000) throw new Error('Animation bundle exceeded the size budget.');
+console.log(`Verified ${new Set(refs).size} local resources, section structure, button-free interaction and JavaScript syntax. JS ${(bundle.size / 1024).toFixed(1)} KiB.`);
